@@ -29,18 +29,25 @@ public class User implements UserDetails{
     private String username;
     private String password;
 
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="user_role_junction",
+            joinColumns = {@JoinColumn(name="user_id")},
+            inverseJoinColumns = {@JoinColumn(name="role_id")}
+    )
+    private Set<Role> authorities;
 
-
-
-    public User(Integer userId, String username, String password) {
+    public User(Integer userId, String username, String password, Set<Role> authorities) {
         super();
         this.userId = userId;
         this.username = username;
         this.password = password;
+        this.authorities = authorities;
     }
 
     public User() {
-
+        super();
+        authorities = new HashSet<>();
     }
 
     public Integer getUserId() {
@@ -54,7 +61,7 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.authorities;
     }
 
     @Override
@@ -82,6 +89,9 @@ public class User implements UserDetails{
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub
         return true;
+    }
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

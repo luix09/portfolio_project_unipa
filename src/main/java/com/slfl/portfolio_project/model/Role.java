@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.model;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="roles")
+@EnableAutoConfiguration
 public class Role implements GrantedAuthority {
 
     @Id

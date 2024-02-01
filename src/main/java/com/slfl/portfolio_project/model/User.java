@@ -3,7 +3,10 @@ package com.slfl.portfolio_project.model;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,14 +23,18 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
+@EnableAutoConfiguration
 public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="user_id")
     private Integer userId;
     @Column(unique=true)
     private String username;
     private String password;
+    @Column(unique=true)
+    private String email;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
@@ -37,11 +44,12 @@ public class User implements UserDetails{
     )
     private Set<Role> authorities;
 
-    public User(Integer userId, String username, String password, Set<Role> authorities) {
+    public User(Integer userId, String username, String email,String password, Set<Role> authorities) {
         super();
         this.userId = userId;
         this.username = username;
         this.password = password;
+        this.email = email;
         this.authorities = authorities;
     }
 
@@ -66,8 +74,13 @@ public class User implements UserDetails{
 
     @Override
     public String getPassword() {
-        // TODO Auto-generated method stub
         return this.password;
+    }
+    public String getEmail() {
+        return this.email;
+    }
+    public String setEmail(String email) {
+        return this.email = email;
     }
 
     public void setPassword(String password) {
@@ -76,7 +89,6 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        // TODO Auto-generated method stub
         return this.username;
     }
 
@@ -87,7 +99,6 @@ public class User implements UserDetails{
     /* If you want account locking capabilities create variables and ways to set them for the methods below */
     @Override
     public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
         return true;
     }
     public void setAuthorities(Set<Role> authorities) {
@@ -96,20 +107,31 @@ public class User implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
         return true;
+    }
+
+    public boolean isValidPassword(String password)
+    {
+        String regex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
+        Pattern p = Pattern.compile(regex);
+        if (password == null) {
+            return false;
+        }
+        Matcher m = p.matcher(password);
+        return m.matches();
     }
 
 }

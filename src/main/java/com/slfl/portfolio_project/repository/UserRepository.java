@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.slfl.portfolio_project.model.User;
@@ -9,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>{
     Optional<User> findByUsername(String username);
+    List<User> findByEmail(String email);
 }

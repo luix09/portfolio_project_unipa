@@ -1,8 +1,6 @@
 package com.slfl.portfolio_project.controller;
 
-import com.slfl.portfolio_project.model.LoginResponseDTO;
 import com.slfl.portfolio_project.model.RegistrationDTO;
-import com.slfl.portfolio_project.model.User;
 import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;

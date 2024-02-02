@@ -1,16 +1,19 @@
 package com.slfl.portfolio_project.model;
 
-public class LoginResponseDTO {
+public class ResponseData {
     private User user;
     private String jwt;
 
-    public LoginResponseDTO(){
+    public ResponseData(){
         super();
     }
 
-    public LoginResponseDTO(User user, String jwt){
+    public ResponseData(User user, String jwt){
         this.user = user;
         this.jwt = jwt;
+    }
+    public ResponseData(User user){
+        this.user = user;
     }
 
     public User getUser(){

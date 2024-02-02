@@ -1,9 +1,8 @@
 package com.slfl.portfolio_project.service;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
-import com.slfl.portfolio_project.model.LoginResponseDTO;
+import com.slfl.portfolio_project.model.ResponseData;
 import com.slfl.portfolio_project.model.Role;
 import com.slfl.portfolio_project.model.User;
 import com.slfl.portfolio_project.model.ResponseStatus;
@@ -51,7 +50,7 @@ public class AuthenticationService {
                 userRepository.findByUsername(username);
                 user = userRepository.save(new User(0, username, email, encodedPassword, authorities));
                 if(user.getUserId() != 0 && user.getUserId() != null ){
-                    return response.registrationSuccess(username);
+                    return response.registrationSuccess(user);
                 }
             }else{
                 return response.passwordLowSecurity();
@@ -71,7 +70,7 @@ public class AuthenticationService {
             );
 
             String token = tokenService.generateJwt(auth);
-            return response.loginSuccess(token);
+            return response.loginSuccess(new ResponseData(userRepository.findByUsername(username).get(),token));
         } catch(AuthenticationException e){
             return response.generalError(e);
         }

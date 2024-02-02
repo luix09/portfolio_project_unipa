@@ -1,12 +1,10 @@
 package com.slfl.portfolio_project.model;
 
-import java.util.ArrayList;
-
 public class ResponseStatus {
 
     private String code;
     private String message;
-    private String data;
+    private ResponseData data;
     public ResponseStatus(){
         super();
     }
@@ -24,14 +22,14 @@ public class ResponseStatus {
     public void setMessage(String message){
         this.message = message;
     }
-    public String getData(){
+    public ResponseData getData(){
         return this.data;
     }
-    public void setData(String data){
+    public void setData(ResponseData data){
         this.data = data;
     }
 
-    public ResponseStatus(String code, String message, String data) {
+    public ResponseStatus(String code, String message, ResponseData data) {
 
         this.code = code;
         this.message = message;
@@ -40,31 +38,31 @@ public class ResponseStatus {
 
 
     public ResponseStatus emailAlreadyUsed(){
-        return new ResponseStatus("401","Email già in uso","");
+        return new ResponseStatus("401","Email già in uso",new ResponseData());
     }
     public ResponseStatus usernameAlreadyUsed(){
-        return new ResponseStatus("401","Username già in uso","");
+        return new ResponseStatus("401","Username già in uso",new ResponseData());
     }
     public ResponseStatus passwordLowSecurity(){
-        return new ResponseStatus("401","Utilizza una password più complessa!","");
+        return new ResponseStatus("401","Utilizza una password più complessa!",new ResponseData());
     }
     public ResponseStatus generalSuccess(){
-        return new ResponseStatus("200","Operazione avvenuta con successo","");
+        return new ResponseStatus("200","Operazione avvenuta con successo",new ResponseData());
     }
-    public ResponseStatus loginSuccess(String jwt){
-        return new ResponseStatus("200","Operazione avvenuta con successo",jwt);
+    public ResponseStatus loginSuccess(ResponseData loginResponseDTO){
+        return new ResponseStatus("200","Operazione avvenuta con successo",loginResponseDTO);
     }
     public ResponseStatus generalError(Exception e) {
-        return new ResponseStatus("404","Operazione fallita",e.getMessage());
+        return new ResponseStatus("404","Operazione fallita",new ResponseData());
 
     }
 
     public ResponseStatus userNotFound() {
-        return new ResponseStatus("404","Utente non trovato","");
+        return new ResponseStatus("404","Utente non trovato",new ResponseData());
     }
 
-    public ResponseStatus registrationSuccess(String username) {
-        return new ResponseStatus("200","Utente registrato correttamente",username);
+    public ResponseStatus registrationSuccess(User user) {
+        return new ResponseStatus("200","Utente registrato correttamente",new ResponseData(user));
 
     }
 }

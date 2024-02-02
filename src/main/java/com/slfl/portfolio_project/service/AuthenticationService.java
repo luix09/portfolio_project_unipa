@@ -65,6 +65,11 @@ public class AuthenticationService {
     public ResponseStatus loginUser(String username, String password){
         ResponseStatus response = new ResponseStatus();
         try{
+            Optional<User> user = userRepository.findByUsername(username);
+
+            if(!user.isPresent()){
+                return response.userNotFound();
+            }
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );

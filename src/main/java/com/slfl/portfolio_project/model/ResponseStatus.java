@@ -8,14 +8,12 @@ public class ResponseStatus {
     public ResponseStatus(){
         super();
     }
-
     public String getCode(){
         return this.code;
     }
     public void setCode(String code){
         this.code = code;
     }
-
     public String getMessage(){
         return this.message;
     }
@@ -28,15 +26,11 @@ public class ResponseStatus {
     public void setData(ResponseData data){
         this.data = data;
     }
-
     public ResponseStatus(String code, String message, ResponseData data) {
-
         this.code = code;
         this.message = message;
         this.data = data;
     }
-
-
     public ResponseStatus emailAlreadyUsed(){
         return new ResponseStatus("401","Email già in uso",new ResponseData());
     }
@@ -54,15 +48,15 @@ public class ResponseStatus {
     }
     public ResponseStatus generalError(Exception e) {
         return new ResponseStatus("404","Operazione fallita",new ResponseData());
-
     }
-
     public ResponseStatus userNotFound() {
         return new ResponseStatus("404","Utente non trovato",new ResponseData());
     }
-
     public ResponseStatus registrationSuccess(User user) {
         return new ResponseStatus("200","Utente registrato correttamente",new ResponseData(user));
 
+    }
+    public ResponseStatus checkSuccess() {
+        return new ResponseStatus("200","Utente autorizzato",new ResponseData());
     }
 }

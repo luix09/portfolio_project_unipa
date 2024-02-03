@@ -54,9 +54,11 @@ public class ResponseStatus {
     }
     public ResponseStatus registrationSuccess(User user) {
         return new ResponseStatus("200","Utente registrato correttamente",new ResponseData(user));
-
     }
     public ResponseStatus checkSuccess() {
         return new ResponseStatus("200","Utente autorizzato",new ResponseData());
+    }
+    public ResponseStatus profileSuccess(User user) {
+        return new ResponseStatus("200","Profilo utente",new ResponseData(user));
     }
 }

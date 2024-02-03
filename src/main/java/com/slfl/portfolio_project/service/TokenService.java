@@ -1,8 +1,12 @@
 package com.slfl.portfolio_project.service;
 
+import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,5 +42,15 @@ public class TokenService {
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+
+    public JSONObject decodeJwt(String token) throws UnsupportedEncodingException, JSONException {
+        token = token.replace("Bearer ","");
+        String[] pieces = token.split("\\.");
+        String b64payload = pieces[1];
+        String decodedToken = new String(Base64.decodeBase64(b64payload), "UTF-8");
+        JSONObject jo = new JSONObject(decodedToken);
+        return jo;
+    }
+
 
 }

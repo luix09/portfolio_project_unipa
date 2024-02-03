@@ -22,20 +22,20 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseStatus registerUser(@RequestBody RegistrationDTO body){
 
-            ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
-            if( resultCheck.getCode() != "200"){
-                return resultCheck;
-            }
-            resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword());
-
+        ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
+        if (resultCheck.getCode().equals("200")) {
             return resultCheck;
+        }
+        resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword());
+
+        return resultCheck;
 
     }
 
     @PostMapping("/login")
     public ResponseStatus loginUser(@RequestBody RegistrationDTO body){
         ResponseStatus resultCheck = authenticationService.checkExistUserLogin(body.getUsername());
-        if( resultCheck.getCode() != "200"){
+        if (resultCheck.getCode().equals("200")) {
             return resultCheck;
         }
         resultCheck = authenticationService.loginUser(body.getUsername(), body.getPassword());

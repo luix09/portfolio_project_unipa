@@ -67,7 +67,7 @@ public class AuthenticationService {
         try{
             Optional<User> user = userRepository.findByUsername(username);
 
-            if(!user.isPresent()){
+            if(user.isEmpty()){
                 return response.userNotFound();
             }
             Authentication auth = authenticationManager.authenticate(
@@ -88,7 +88,7 @@ public class AuthenticationService {
             return response.emailAlreadyUsed();
         }
         Optional<User> usernameUser = userRepository.findByUsername(username);
-        if(!usernameUser.isEmpty()){
+        if(usernameUser.isPresent()){
             return response.usernameAlreadyUsed();
         }
         return response.generalSuccess();
@@ -100,7 +100,6 @@ public class AuthenticationService {
         if(usernameUser.isEmpty()){
             return response.userNotFound();
         }
-
         return response.generalSuccess();
     }
 }

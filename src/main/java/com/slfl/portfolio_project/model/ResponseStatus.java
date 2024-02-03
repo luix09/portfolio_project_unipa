@@ -61,4 +61,12 @@ public class ResponseStatus {
     public ResponseStatus profileSuccess(User user) {
         return new ResponseStatus("200","Profilo utente",new ResponseData(user));
     }
+
+    public ResponseStatus updatedUserSuccessfully() {
+        return new ResponseStatus("200","Utente modificato correttamente",new ResponseData());
+    }
+
+    public ResponseStatus sessionNotAuthenticated() {
+        return new ResponseStatus("200","Non sei autorizzato ad accedere a questa risorsa.", new ResponseData());
+    }
 }

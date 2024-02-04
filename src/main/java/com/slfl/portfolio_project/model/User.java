@@ -53,6 +53,14 @@ public class User implements UserDetails{
         this.authorities = authorities;
     }
 
+    public User(Integer userId, String username, String email,String password) {
+        super();
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     public User() {
         super();
         authorities = new HashSet<>();

@@ -10,6 +10,7 @@ import com.slfl.portfolio_project.repository.RoleRepository;
 import com.slfl.portfolio_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -42,7 +43,7 @@ public class AuthenticationService {
         try{
             if(user.isValidPassword(password)){
                 String encodedPassword = passwordEncoder.encode(password);
-                Role userRole = roleRepository.findByAuthority("USER").get();
+                Role userRole = roleRepository.findById(4).get();
                 Set<Role> authorities = new HashSet<>();
 
                 authorities.add(userRole);
@@ -67,7 +68,7 @@ public class AuthenticationService {
         try{
             Optional<User> user = userRepository.findByUsername(username);
 
-            if(!user.isPresent()){
+            if(user.isEmpty()){
                 return response.userNotFound();
             }
             Authentication auth = authenticationManager.authenticate(
@@ -76,6 +77,8 @@ public class AuthenticationService {
 
             String token = tokenService.generateJwt(auth);
             return response.loginSuccess(new ResponseData(userRepository.findByUsername(username).get(),token));
+        } catch(BadCredentialsException e) {
+          return response.invalidCredentials(e);
         } catch(AuthenticationException e){
             return response.generalError(e);
         }
@@ -88,7 +91,7 @@ public class AuthenticationService {
             return response.emailAlreadyUsed();
         }
         Optional<User> usernameUser = userRepository.findByUsername(username);
-        if(!usernameUser.isEmpty()){
+        if(usernameUser.isPresent()){
             return response.usernameAlreadyUsed();
         }
         return response.generalSuccess();
@@ -100,7 +103,6 @@ public class AuthenticationService {
         if(usernameUser.isEmpty()){
             return response.userNotFound();
         }
-
         return response.generalSuccess();
     }
 }

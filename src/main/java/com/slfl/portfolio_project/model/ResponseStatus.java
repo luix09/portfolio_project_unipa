@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.model;
 
+
 public class ResponseStatus {
 
     private String code;
@@ -49,6 +50,11 @@ public class ResponseStatus {
     public ResponseStatus generalError(Exception e) {
         return new ResponseStatus("404","Operazione fallita",new ResponseData());
     }
+
+    public ResponseStatus invalidCredentials(Exception e) {
+        return new ResponseStatus("404", e.getMessage(), new ResponseData());
+    }
+
     public ResponseStatus userNotFound() {
         return new ResponseStatus("404","Utente non trovato",new ResponseData());
     }
@@ -60,5 +66,13 @@ public class ResponseStatus {
     }
     public ResponseStatus profileSuccess(User user) {
         return new ResponseStatus("200","Profilo utente",new ResponseData(user));
+    }
+
+    public ResponseStatus updatedUserSuccessfully() {
+        return new ResponseStatus("200","Utente modificato correttamente",new ResponseData());
+    }
+
+    public ResponseStatus sessionNotAuthenticated() {
+        return new ResponseStatus("200","Non sei autorizzato ad accedere a questa risorsa.", new ResponseData());
     }
 }

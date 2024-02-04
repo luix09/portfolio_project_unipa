@@ -5,7 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UserDTORequest {
     public UserDTORequest() {}
 
-    public UserDTORequest(String username, String password, String email) {}
+    public UserDTORequest(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
     @JsonProperty
     private String username;

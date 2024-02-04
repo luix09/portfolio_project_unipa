@@ -40,22 +40,27 @@ public class UserService implements UserDetailsService {
 
     public ResponseStatus updateUser(int userId, UserDTORequest userDTORequest) {
         ResponseStatus response = new ResponseStatus();
-        if(userRepository.findById(userId).isPresent()) {
-            User user = userRepository.findById(userId).get();
-            userRepository.save(new User(user.getUserId(), userDTORequest.getUsername(), userDTORequest.getEmail(), userDTORequest.getPassword()));
-            return response.updatedUserSuccessfully();
-        } else {
-            return response.userNotFound();
+        try {
+            if (userRepository.findById(userId).isPresent()) {
+                User user = userRepository.findById(userId).get();
+                String encodedPassword = encoder.encode(userDTORequest.getPassword());
+                userRepository.save(new User(user.getUserId(), userDTORequest.getUsername(), userDTORequest.getEmail(), encodedPassword));
+                return response.updatedUserSuccessfully();
+            } else {
+                return response.userNotFound();
+            }
+        } catch (Exception e) {
+            return response.generalError(e);
         }
     }
 
-    public boolean checkAuth(String token) throws UnsupportedEncodingException, JSONException {
+    public boolean checkAuth(String token) {
         try {
             JSONObject decodedToken = tokenService.decodeJwt(token);
             String info = decodedToken.getString("sub");
             User user = userRepository.findByUsername(info).get();
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }

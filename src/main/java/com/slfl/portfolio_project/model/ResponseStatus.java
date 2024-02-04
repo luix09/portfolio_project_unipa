@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.model;
 
+
 public class ResponseStatus {
 
     private String code;
@@ -49,6 +50,11 @@ public class ResponseStatus {
     public ResponseStatus generalError(Exception e) {
         return new ResponseStatus("404","Operazione fallita",new ResponseData());
     }
+
+    public ResponseStatus invalidCredentials(Exception e) {
+        return new ResponseStatus("404", e.getMessage(), new ResponseData());
+    }
+
     public ResponseStatus userNotFound() {
         return new ResponseStatus("404","Utente non trovato",new ResponseData());
     }

@@ -38,13 +38,15 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
     }
 
-    public ResponseStatus updateUser(int userId, UserDTORequest userDTORequest) {
+    public ResponseStatus updateUser(String token, UserDTORequest userDTORequest) {
         ResponseStatus response = new ResponseStatus();
         try {
-            if (userRepository.findById(userId).isPresent()) {
-                User user = userRepository.findById(userId).get();
+            JSONObject decodedToken = tokenService.decodeJwt(token);
+            String info = decodedToken.getString("sub");
+            if (userRepository.findByUsername(info).isPresent()) {
+                User user = userRepository.findByUsername(info).get();
                 String encodedPassword = encoder.encode(userDTORequest.getPassword());
-                userRepository.save(new User(user.getUserId(), userDTORequest.getUsername(), userDTORequest.getEmail(), encodedPassword));
+                userRepository.save(new User(user.getUserId(), userDTORequest.getUsername(), user.getEmail(), encodedPassword));
                 return response.updatedUserSuccessfully();
             } else {
                 return response.userNotFound();

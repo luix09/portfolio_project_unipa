@@ -3,22 +3,23 @@ package com.slfl.portfolio_project.model.requests;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDTORequest {
-    public UserDTORequest() {}
-
-    public UserDTORequest(String username, String password, String email) {
+    public UserDTORequest(){
+        super();
+    }
+    public UserDTORequest(String name, String surname, String username, String password ) {
+        super();
+        this.name = name;
+        this.surname = surname;
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
-    @JsonProperty
+    private String name;
+    private String surname;
     private String username;
-
-    @JsonProperty
     private String password;
 
-    @JsonProperty
-    private String email;
+
 
     public String getUsername() {
         return username;
@@ -36,11 +37,17 @@ public class UserDTORequest {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getSurname() {
+        return surname;
+    }
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 }

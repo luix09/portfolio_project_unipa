@@ -33,8 +33,12 @@ public class User implements UserDetails{
     @Column(unique=true)
     private String username;
     private String password;
-    @Column(unique=true)
+    @Column(unique=true, nullable = true)
     private String email;
+    @Column
+    private String name;
+    @Column
+    private String surname;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
@@ -44,7 +48,7 @@ public class User implements UserDetails{
     )
     private Set<Role> authorities;
 
-    public User(Integer userId, String username, String email,String password, Set<Role> authorities) {
+    public User(Integer userId, String username, String email, String password, Set<Role> authorities) {
         super();
         this.userId = userId;
         this.username = username;
@@ -53,12 +57,14 @@ public class User implements UserDetails{
         this.authorities = authorities;
     }
 
-    public User(Integer userId, String username, String email,String password) {
+    public User(Integer userId, String name, String surname, String username, String email, String password) {
         super();
         this.userId = userId;
+        this.name =  name;
+        this.surname = surname;
         this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
     }
 
     public User() {
@@ -142,4 +148,19 @@ public class User implements UserDetails{
         return m.matches();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 }

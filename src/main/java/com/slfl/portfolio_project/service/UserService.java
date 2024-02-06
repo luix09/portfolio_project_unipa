@@ -1,15 +1,9 @@
 package com.slfl.portfolio_project.service;
 
-
-import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.model.User;
 import com.slfl.portfolio_project.model.requests.UserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,9 +37,12 @@ public class UserService implements UserDetailsService {
         try {
             if (userRepository.findById(userId).isPresent()) {
                 User user = userRepository.findById(userId).get();
-                String encodedPassword = encoder.encode(userDTORequest.getPassword());
-                userRepository.save(new User(user.getUserId(), userDTORequest.getUsername(), userDTORequest.getEmail(), encodedPassword));
-                return response.updatedUserSuccessfully();
+                if (encoder.matches(userDTORequest.getPassword(), user.getPassword())) {
+                    userRepository.save(new User(user.getUserId(), userDTORequest.getName(), userDTORequest.getSurname(), user.getUsername(), user.getEmail(), user.getPassword()));
+                    return response.updatedUserSuccessfully();
+                } else {
+                    return response.invalidPassword();
+                }
             } else {
                 return response.userNotFound();
             }

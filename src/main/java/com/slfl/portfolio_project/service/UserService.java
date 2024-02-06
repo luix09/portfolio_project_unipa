@@ -55,7 +55,7 @@ public class UserService implements UserDetailsService {
         try {
             JSONObject decodedToken = tokenService.decodeJwt(token);
             String info = decodedToken.getString("sub");
-            User user = userRepository.findByUsername(info).get();
+            userRepository.findByUsername(info).get();
             return true;
         } catch (Exception e) {
             return false;

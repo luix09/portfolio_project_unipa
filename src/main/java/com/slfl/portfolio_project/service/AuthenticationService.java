@@ -37,11 +37,11 @@ public class AuthenticationService {
     @Autowired
     private TokenService tokenService;
 
-    public ResponseStatus registerUser(String username, String email, String password){
+    public ResponseStatus registerUser(String username, String email, String password) {
         ResponseStatus response = new ResponseStatus();
         User user = new User();
-        try{
-            if(user.isValidPassword(password)){
+        try {
+            if (user.isValidPassword(password)) {
                 String encodedPassword = passwordEncoder.encode(password);
                 Role userRole = roleRepository.findById(4).get();
                 Set<Role> authorities = new HashSet<>();
@@ -50,25 +50,25 @@ public class AuthenticationService {
 
                 userRepository.findByUsername(username);
                 user = userRepository.save(new User(0, username, email, encodedPassword, authorities));
-                if(user.getUserId() != 0 && user.getUserId() != null ){
+                if (user.getUserId() != 0 && user.getUserId() != null) {
                     return response.registrationSuccess(user);
                 }
-            }else{
+            } else {
                 return response.passwordLowSecurity();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return response.generalError(e);
         }
 
         return response;
     }
 
-    public ResponseStatus loginUser(String username, String password){
+    public ResponseStatus loginUser(String username, String password) {
         ResponseStatus response = new ResponseStatus();
-        try{
+        try {
             Optional<User> user = userRepository.findByUsername(username);
 
-            if(user.isEmpty()){
+            if (user.isEmpty()) {
                 return response.userNotFound();
             }
             Authentication auth = authenticationManager.authenticate(
@@ -76,10 +76,10 @@ public class AuthenticationService {
             );
 
             String token = tokenService.generateJwt(auth);
-            return response.loginSuccess(new ResponseData(userRepository.findByUsername(username).get(),token));
-        } catch(BadCredentialsException e) {
-          return response.invalidCredentials(e);
-        } catch(AuthenticationException e){
+            return response.loginSuccess(new ResponseData(userRepository.findByUsername(username).get(), token));
+        } catch (BadCredentialsException e) {
+            return response.invalidCredentials(e);
+        } catch (AuthenticationException e) {
             return response.generalError(e);
         }
     }
@@ -87,11 +87,11 @@ public class AuthenticationService {
     public ResponseStatus checkExistUser(String username, String email) {
         ResponseStatus response = new ResponseStatus();
         List<User> emailUser = userRepository.findByEmail(email);
-        if(!emailUser.isEmpty()){
+        if (!emailUser.isEmpty()) {
             return response.emailAlreadyUsed();
         }
         Optional<User> usernameUser = userRepository.findByUsername(username);
-        if(usernameUser.isPresent()){
+        if (usernameUser.isPresent()) {
             return response.usernameAlreadyUsed();
         }
         return response.generalSuccess();
@@ -100,7 +100,7 @@ public class AuthenticationService {
     public ResponseStatus checkExistUserLogin(String username) {
         ResponseStatus response = new ResponseStatus();
         Optional<User> usernameUser = userRepository.findByUsername(username);
-        if(usernameUser.isEmpty()){
+        if (usernameUser.isEmpty()) {
             return response.userNotFound();
         }
         return response.generalSuccess();

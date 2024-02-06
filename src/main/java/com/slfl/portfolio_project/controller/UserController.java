@@ -43,11 +43,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/update/{id}")
-    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
+    @PostMapping("/update")
+    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
         try {
             if (userService.checkAuth(token)) {
-                return userService.updateUser(id, updatedUser);
+                return userService.updateUser(token, updatedUser);
             } else {
                 return new ResponseStatus().sessionNotAuthenticated();
             }

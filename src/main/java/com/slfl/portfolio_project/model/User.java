@@ -136,7 +136,10 @@ public class User implements UserDetails{
 
     public boolean isValidPassword(String password)
     {
-        String regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
+        String regex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
         Pattern p = Pattern.compile(regex);
         if (password == null) {
             return false;

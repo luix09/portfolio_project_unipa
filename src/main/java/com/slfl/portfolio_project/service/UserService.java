@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
     }
 
-    public ResponseStatus updateUser(String token, UserDTORequest userDTORequest) {
+    public ResponseStatus updateUser(int userId, UserDTORequest userDTORequest) {
         ResponseStatus response = new ResponseStatus();
         try {
             if (userRepository.findById(userId).isPresent()) {
@@ -43,9 +43,9 @@ public class UserService implements UserDetailsService {
                 } else {
                     return response.invalidPassword();
                 }
-             } else {
+            } else {
                 return response.userNotFound();
-             }
+            }
         } catch (Exception e) {
             return response.generalError(e);
         }

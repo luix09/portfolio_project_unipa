@@ -43,7 +43,7 @@ public class AuthenticationService {
         try {
             if (user.isValidPassword(password)) {
                 String encodedPassword = passwordEncoder.encode(password);
-                Role userRole = roleRepository.findById(4).get();
+                Role userRole = roleRepository.findById(1).get();
                 Set<Role> authorities = new HashSet<>();
 
                 authorities.add(userRole);

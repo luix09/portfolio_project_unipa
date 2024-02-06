@@ -9,7 +9,6 @@ import com.slfl.portfolio_project.service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -44,11 +43,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/update")
-    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
+    @PostMapping("/update/{id}")
+    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
         try {
             if (userService.checkAuth(token)) {
-                return userService.updateUser(token, updatedUser);
+                return userService.updateUser(id, updatedUser);
             } else {
                 return new ResponseStatus().sessionNotAuthenticated();
             }

@@ -73,6 +73,10 @@ public class ResponseStatus {
     }
 
     public ResponseStatus sessionNotAuthenticated() {
-        return new ResponseStatus("200","Non sei autorizzato ad accedere a questa risorsa.", new ResponseData());
+        return new ResponseStatus("401","Non sei autorizzato ad accedere a questa risorsa.", new ResponseData());
+    }
+
+    public ResponseStatus invalidPassword() {
+        return new ResponseStatus("404","Password non corretta, riprova.", new ResponseData());
     }
 }

@@ -2,7 +2,7 @@ package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.model.User;
-import com.slfl.portfolio_project.model.requests.UserDTORequest;
+import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
 import com.slfl.portfolio_project.service.TokenService;
 import com.slfl.portfolio_project.service.UserService;
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
+    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UpdateUserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
         try {
             if (userService.checkAuth(token)) {
                 return userService.updateUser(id, updatedUser);

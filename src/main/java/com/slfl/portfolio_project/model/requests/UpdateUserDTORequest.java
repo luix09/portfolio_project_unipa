@@ -2,14 +2,15 @@ package com.slfl.portfolio_project.model.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserDTORequest {
-    public UserDTORequest() {}
+public class UpdateUserDTORequest {
+    public UpdateUserDTORequest() {}
 
-    public UserDTORequest(String name, String surname, String username, String password) {
+    public UpdateUserDTORequest(String name, String surname, String username, String password, boolean isPhotographer) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
+        this.isPhotographer = isPhotographer;
     }
 
     @JsonProperty
@@ -26,6 +27,9 @@ public class UserDTORequest {
 
     @JsonProperty
     private String email;
+
+    @JsonProperty
+    private boolean isPhotographer;
 
     public String getUsername() {
         return username;
@@ -65,5 +69,13 @@ public class UserDTORequest {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public boolean isPhotographer() {
+        return isPhotographer;
+    }
+
+    public void setPhotographer(boolean photographer) {
+        isPhotographer = photographer;
     }
 }

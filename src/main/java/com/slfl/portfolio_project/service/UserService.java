@@ -2,7 +2,7 @@ package com.slfl.portfolio_project.service;
 
 import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.model.User;
-import com.slfl.portfolio_project.model.requests.UserDTORequest;
+import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +24,13 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        System.out.println("In the user details service");
-
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
-    }
-
-    public ResponseStatus updateUser(int userId, UserDTORequest userDTORequest) {
+    public ResponseStatus updateUser(int userId, UpdateUserDTORequest userDTORequest) {
         ResponseStatus response = new ResponseStatus();
         try {
             if (userRepository.findById(userId).isPresent()) {
                 User user = userRepository.findById(userId).get();
                 if (encoder.matches(userDTORequest.getPassword(), user.getPassword())) {
-                    userRepository.save(new User(user.getUserId(), userDTORequest.getName(), userDTORequest.getSurname(), user.getUsername(), user.getEmail(), user.getPassword()));
+                    userRepository.save(new User(user.getUserId(), userDTORequest.getName(), userDTORequest.getSurname(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRole()));
                     return response.updatedUserSuccessfully();
                 } else {
                     return response.invalidPassword();
@@ -62,4 +54,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("In the user details service");
+
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
+    }
 }

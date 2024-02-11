@@ -1,75 +1,63 @@
 package com.slfl.portfolio_project.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @EnableAutoConfiguration
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="user_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     private Integer userId;
-    @Column(unique=true)
+    @Column(unique = true)
     private String username;
+    @Column
     private String password;
-    @Column(unique=true, nullable = true)
+    @Column(unique = true, nullable = true)
     private String email;
     @Column
     private String name;
     @Column
     private String surname;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(
-            name="user_role_junction",
-            joinColumns = {@JoinColumn(name="user_id")},
-            inverseJoinColumns = {@JoinColumn(name="role_id")}
-    )
-    private Set<Role> authorities;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
-    public User(Integer userId, String username, String email, String password, Set<Role> authorities) {
+    public User(String username, String email, String password, Role type) {
         super();
-        this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.authorities = authorities;
+        this.role = type;
     }
 
-    public User(Integer userId, String name, String surname, String username, String email, String password) {
+    public User(Integer userId, String name, String surname, String username, String email, String password, Role type) {
         super();
         this.userId = userId;
-        this.name =  name;
+        this.name = name;
         this.surname = surname;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = type;
     }
 
     public User() {
         super();
-        authorities = new HashSet<>();
+        role = new Role(RoleType.CUSTOMER);
     }
 
     public Integer getUserId() {
@@ -80,19 +68,21 @@ public class User implements UserDetails{
         this.userId = userId;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.role.getAuthority()));
+        return authorities;
     }
 
-    @Override
     public String getPassword() {
         return this.password;
     }
+
     public String getEmail() {
         return this.email;
     }
+
     public String setEmail(String email) {
         return this.email = email;
     }
@@ -101,22 +91,13 @@ public class User implements UserDetails{
         this.password = password;
     }
 
-    @Override
     public String getUsername() {
         return this.username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /* If you want account locking capabilities create variables and ways to set them for the methods below */
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
-    public void setAuthorities(Set<Role> authorities) {
-        this.authorities = authorities;
     }
 
     @Override
@@ -134,8 +115,11 @@ public class User implements UserDetails{
         return true;
     }
 
-    public boolean isValidPassword(String password)
-    {
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isValidPassword(String password) {
         String regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
         Pattern p = Pattern.compile(regex);
         if (password == null) {
@@ -145,19 +129,11 @@ public class User implements UserDetails{
         return m.matches();
     }
 
-    public String getName() {
-        return name;
+    public Role getRole() {
+        return role;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

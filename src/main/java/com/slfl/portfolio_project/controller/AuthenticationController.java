@@ -2,6 +2,7 @@ package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.model.RegistrationDTO;
 import com.slfl.portfolio_project.model.ResponseStatus;
+import com.slfl.portfolio_project.model.RoleType;
 import com.slfl.portfolio_project.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,11 +22,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseStatus registerUser(@RequestBody RegistrationDTO body) {
-        ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
-        if (resultCheck.getCode().equals("200")) {
-            resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword());
+        try {
+            ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
+            if (resultCheck.getCode().equals("200")) {
+                resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword(), body.isPhotographer());
+            }
+            return resultCheck;
+        } catch (RuntimeException ex) {
+            return new ResponseStatus().generalError(ex);
         }
-        return resultCheck;
     }
 
     @PostMapping("/login")

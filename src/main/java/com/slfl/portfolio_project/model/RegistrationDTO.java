@@ -1,19 +1,25 @@
 package com.slfl.portfolio_project.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class RegistrationDTO {
     private String username;
     private String password;
     private String email;
 
+    @JsonProperty("is_photographer")
+    private boolean isPhotographer;
+
     public RegistrationDTO(){
         super();
     }
 
-    public RegistrationDTO(String username, String email ,String password){
+    public RegistrationDTO(String username, String email, String password, boolean isPhotographer) {
         super();
         this.username = username;
         this.password = password;
         this.email = email;
+        this.isPhotographer = isPhotographer;
     }
 
     public String getUsername(){
@@ -42,5 +48,13 @@ public class RegistrationDTO {
 
     public String toString(){
         return "Registration info: username: " + this.username + " password: " + this.password;
+    }
+
+    public boolean isPhotographer() {
+        return isPhotographer;
+    }
+
+    public void setPhotographer(boolean photographer) {
+        isPhotographer = photographer;
     }
 }

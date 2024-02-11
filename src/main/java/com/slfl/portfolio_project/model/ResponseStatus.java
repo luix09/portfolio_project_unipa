@@ -48,7 +48,7 @@ public class ResponseStatus {
         return new ResponseStatus("200","Operazione avvenuta con successo",loginResponseDTO);
     }
     public ResponseStatus generalError(Exception e) {
-        return new ResponseStatus("404","Operazione fallita",new ResponseData());
+        return new ResponseStatus("404", "Operazione fallita: " + e, new ResponseData());
     }
 
     public ResponseStatus invalidCredentials(Exception e) {

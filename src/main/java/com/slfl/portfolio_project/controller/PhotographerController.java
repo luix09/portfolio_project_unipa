@@ -1,6 +1,7 @@
 package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
+import com.slfl.portfolio_project.model.Album;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
@@ -59,10 +60,16 @@ public class PhotographerController {
     public String handlePictureUpload(@RequestParam("file") MultipartFile file,
                                       RedirectAttributes redirectAttributes, @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Integer pictureId) {
         try {
+            // needed to get userDir/albumTitle structure for the directory
             String userDir = userService.getUserFromToken(token).getUsername();
-            storageService.store(file, userDir);
+            Album album = albumService.getAlbumIdByPictureId(pictureId);
+
+            // Store inside that directory
+            storageService.store(file, userDir + album.getTitle());
             String path = storageService.load(file.getOriginalFilename()).toUri().getPath();
+            // Storing path to database
             imageFileService.storeFileToPictureTable(path, pictureId);
+
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded " + file.getOriginalFilename() + "!");
         } catch (Exception e) {

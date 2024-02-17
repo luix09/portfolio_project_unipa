@@ -5,6 +5,7 @@ import com.slfl.portfolio_project.model.Picture;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
 import com.slfl.portfolio_project.model.response_factory.ResponseFactory;
+import com.slfl.portfolio_project.model.response_factory.image.LoadedImageResponse;
 import com.slfl.portfolio_project.model.response_factory.picture.PictureResponseFactory;
 import com.slfl.portfolio_project.repository.AlbumRepository;
 import com.slfl.portfolio_project.repository.PictureRepository;
@@ -12,7 +13,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -20,12 +23,14 @@ public class PictureService {
 
     private final PictureRepository pictureRepository;
     private final AlbumRepository albumRepository;
+    private final ImageFileService imageFileService;
     private final ResponseFactory responseFactory;
 
     @Autowired
-    PictureService(PictureRepository pictureRepository, AlbumRepository albumRepository) {
+    PictureService(PictureRepository pictureRepository, AlbumRepository albumRepository, ImageFileService imageFileService) {
         this.pictureRepository = pictureRepository;
         this.albumRepository = albumRepository;
+        this.imageFileService = imageFileService;
         this.responseFactory = new PictureResponseFactory();
     }
 
@@ -84,7 +89,7 @@ public class PictureService {
         }
     }
 
-    public void updateFilePicture(Integer pictureId, String path) throws Exception{
+    public void updateFilePicture(Integer pictureId, String path) throws Exception {
         Optional<Picture> specifiedPicture = pictureRepository.findById(pictureId);
         if (specifiedPicture.isEmpty()) {
             throw new Exception("Immagine non trovata");
@@ -101,6 +106,19 @@ public class PictureService {
             }
             pictureRepository.delete(specifiedPicture.get());
             return this.responseFactory.deleteSuccessfullyResponse();
+        } catch (Exception e) {
+            return this.responseFactory.createCustomError("404", e.getMessage());
+        }
+    }
+
+    public CustomResponse loadFileImageByAlbum(Integer albumId) {
+        try {
+            Optional<Album> foundAlbum = albumRepository.findById(albumId);
+            if (foundAlbum.isEmpty()) {
+                return this.responseFactory.createCustomError("404", "Album non trovato in loadFileImageByAlbum");
+            }
+            Stream<Path> images = imageFileService.loadImagesOfAlbum(foundAlbum.get());
+            return new LoadedImageResponse("200", "Immagini scaricate con successo.", images);
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }

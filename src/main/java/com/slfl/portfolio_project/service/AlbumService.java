@@ -66,13 +66,13 @@ public class AlbumService {
     public CustomResponse getPhotographerAlbum(String photographer, Integer albumId) {
         try {
             User pUser = userService.getUserByUsername(photographer);
-            Optional<Album> allAlbums = albumRepository.findByOwnerAndAlbumId(pUser, albumId);
+            Optional<Album> singleAlbum = albumRepository.findByOwnerAndAlbumId(pUser, albumId);
 
-            if(allAlbums.isEmpty()) {
+            if(singleAlbum.isEmpty()) {
                 return this.responseFactory.createCustomError("404", "Album non trovato.");
             }
 
-            return this.responseFactory.createDataResponse(allAlbums.get());
+            return this.responseFactory.createDataResponse(singleAlbum.get());
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }
@@ -104,5 +104,13 @@ public class AlbumService {
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }
+    }
+
+    public Album getAlbumIdByPictureId(Integer pictureId) throws Exception {
+        Optional<Album> retrievedAlbum = albumRepository.findByPictureId(pictureId);
+        if(retrievedAlbum.isEmpty()) {
+            throw new Exception("Album dell'immagine non trovato.");
+        }
+        return retrievedAlbum.get();
     }
 }

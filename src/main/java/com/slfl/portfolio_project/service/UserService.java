@@ -4,6 +4,7 @@ import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.model.User;
 import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 
 @Service
@@ -41,6 +45,24 @@ public class UserService implements UserDetailsService {
         } catch (Exception e) {
             return response.generalError(e);
         }
+    }
+
+    public User getUserByUsername(String username) {
+        try {
+            Optional<User> selectedUser = userRepository.findByUsername(username);
+            return selectedUser.orElse(null);
+        } catch(Exception ex) {
+            return null;
+        }
+    }
+
+    public User getUserFromToken(String token) throws UnsupportedEncodingException, JSONException, UsernameNotFoundException {
+        JSONObject decodedToken = tokenService.decodeJwt(token);
+        String info = decodedToken.getString("sub");
+        if(userRepository.findByUsername(info).isEmpty()) {
+            throw new UsernameNotFoundException("User not found.");
+        }
+        return userRepository.findByUsername(info).get();
     }
 
     public boolean checkAuth(String token) {

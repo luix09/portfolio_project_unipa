@@ -2,7 +2,6 @@ package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.model.RegistrationDTO;
 import com.slfl.portfolio_project.model.ResponseStatus;
-import com.slfl.portfolio_project.model.RoleType;
 import com.slfl.portfolio_project.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
-public class AuthenticationController {
+public class  AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;

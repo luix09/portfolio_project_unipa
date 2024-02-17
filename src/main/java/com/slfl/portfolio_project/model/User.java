@@ -7,12 +7,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 @EnableAutoConfiguration
 public class User implements UserDetails {
@@ -21,20 +25,45 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Integer userId;
+
     @Column(unique = true)
     private String username;
+
     @Column
     private String password;
-    @Column(unique = true, nullable = true)
+
+    @Column(unique = true)
     private String email;
+
     @Column
     private String name;
+
     @Column
     private String surname;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Album> albums;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "user_albums",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "album_id") }
+    )
+    private List<Album> likedAlbums;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "user_pictures",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "picture_id") }
+    )
+    private List<Picture> likedPictures;
+
 
     public User(String username, String email, String password, Role type) {
         super();
@@ -60,10 +89,6 @@ public class User implements UserDetails {
         role = new Role(RoleType.CUSTOMER);
     }
 
-    public Integer getUserId() {
-        return this.userId;
-    }
-
     public void setId(Integer userId) {
         this.userId = userId;
     }
@@ -75,24 +100,8 @@ public class User implements UserDetails {
         return authorities;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
     public String setEmail(String email) {
         return this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return this.username;
     }
 
     @Override
@@ -115,10 +124,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public boolean isValidPassword(String password) {
         String regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
         Pattern p = Pattern.compile(regex);
@@ -127,13 +132,5 @@ public class User implements UserDetails {
         }
         Matcher m = p.matcher(password);
         return m.matches();
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 }

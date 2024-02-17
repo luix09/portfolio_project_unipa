@@ -56,4 +56,33 @@ public class UserController {
         }
     }
 
+    @GetMapping("/random/albums")
+    public ResponseStatus getRandomAlbums() {
+        try {
+
+        } catch (Exception e) {
+
+        }
+        return new ResponseStatus();
+    }
+
+    @GetMapping("/view/photographer/albums")
+    public ResponseStatus getAllPhotographerAlbums() {
+        try {
+
+        } catch (Exception e) {
+
+        }
+        return new ResponseStatus();
+    }
+
+    @GetMapping("/view/photographer/album/{id}")
+    public ResponseStatus getPhotographerAlbum(@PathVariable String id) {
+        try {
+
+        } catch (Exception e) {
+
+        }
+        return new ResponseStatus();
+    }
 }

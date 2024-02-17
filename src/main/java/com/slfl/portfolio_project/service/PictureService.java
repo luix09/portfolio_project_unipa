@@ -39,7 +39,7 @@ public class PictureService {
 
             Optional<Album> matchedAlbum = albumRepository.findById(albumId);
 
-            if(matchedAlbum.isEmpty()) {
+            if (matchedAlbum.isEmpty()) {
                 return this.responseFactory.createCustomError("404", "Album non trovato.");
             }
 
@@ -60,7 +60,7 @@ public class PictureService {
     public CustomResponse getSinglePicture(Integer pictureId) {
         try {
             Optional<Picture> specifiedPicture = pictureRepository.findById(pictureId);
-            if(specifiedPicture.isEmpty()) {
+            if (specifiedPicture.isEmpty()) {
                 return this.responseFactory.createCustomError("404", "Immagine non trovata.");
             }
             return this.responseFactory.createDataResponse(specifiedPicture.get());
@@ -82,6 +82,15 @@ public class PictureService {
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }
+    }
+
+    public void updateFilePicture(Integer pictureId, String path) throws Exception{
+        Optional<Picture> specifiedPicture = pictureRepository.findById(pictureId);
+        if (specifiedPicture.isEmpty()) {
+            throw new Exception("Immagine non trovata");
+        }
+        Picture retrievedPicture = specifiedPicture.get();
+        pictureRepository.save(new Picture(pictureId, retrievedPicture.getTitle(), retrievedPicture.getDescription(), retrievedPicture.getCategory(), retrievedPicture.getShootDate(), retrievedPicture.getAlbum(), path));
     }
 
     public CustomResponse deletePicture(Integer pictureId) {

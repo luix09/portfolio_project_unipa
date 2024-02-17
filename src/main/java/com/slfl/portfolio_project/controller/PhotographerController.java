@@ -4,10 +4,7 @@ import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
-import com.slfl.portfolio_project.service.AlbumService;
-import com.slfl.portfolio_project.service.PictureService;
-import com.slfl.portfolio_project.service.StorageService;
-import com.slfl.portfolio_project.service.UserService;
+import com.slfl.portfolio_project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +26,9 @@ public class PhotographerController {
 
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private ImageFileService imageFileService;
 
     @Autowired
     private UserService userService;
@@ -55,17 +55,19 @@ public class PhotographerController {
     }
 
     //TODO: to be tested
-    @PostMapping("/picture/upload")
+    @PostMapping("/picture/upload/{pictureId}")
     public String handlePictureUpload(@RequestParam("file") MultipartFile file,
-                                      RedirectAttributes redirectAttributes, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+                                      RedirectAttributes redirectAttributes, @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Integer pictureId) {
         try {
             String userDir = userService.getUserFromToken(token).getUsername();
             storageService.store(file, userDir);
+            String path = storageService.load(file.getOriginalFilename()).toUri().getPath();
+            imageFileService.storeFileToPictureTable(path, pictureId);
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded " + file.getOriginalFilename() + "!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message",
-                    "Error while uploading " + file.getOriginalFilename() + "!");
+                    "Error while uploading " + file.getOriginalFilename() + "!" + "\nError: " + e.getMessage());
         }
         return "redirect:/";
     }

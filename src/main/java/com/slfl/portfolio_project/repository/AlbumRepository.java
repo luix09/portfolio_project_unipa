@@ -17,6 +17,9 @@ public interface AlbumRepository extends JpaRepository<Album, Integer> {
 
     Optional<Album> findByOwnerAndAlbumId(User owner, Integer albumId);
 
+    @Query("SELECT a FROM Album a JOIN a.pictures p WHERE p.pictureId = :pictureId")
+    Optional<Album> findByPictureId(Integer pictureId);
+
     @Query("SELECT a FROM Album a ORDER BY SIZE(a.usersWhoLikes) DESC")
     List<Album> findMostLikedAlbums();
 }

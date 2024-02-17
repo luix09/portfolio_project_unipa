@@ -86,6 +86,23 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    public Stream<Path> loadAllByDirectory(String directory) {
+        try {
+            return Files.walk(this.rootLocation.resolve(directory), 1)
+                    .filter(path -> !path.equals(this.rootLocation))
+                    .map(this.rootLocation::relativize);
+        }
+        catch (IOException e) {
+            throw new StorageException("Failed to read stored files", e);
+        }
+    }
+
+
+    public Path loadByDirectory(String filename, String directory) {
+        return rootLocation.resolve(directory + "/" + filename);
+    }
+
+    @Override
     public Path load(String filename) {
         return rootLocation.resolve(filename);
     }

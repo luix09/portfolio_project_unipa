@@ -76,6 +76,15 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public User getUserByAlbumId(Integer albumId) throws Exception {
+        Optional<User> foundUser = userRepository.findByAlbumId(albumId);
+
+        if(foundUser.isEmpty()) {
+            throw new Exception("Album non associato ad alcun utente!");
+        }
+        return foundUser.get();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("In the user details service");

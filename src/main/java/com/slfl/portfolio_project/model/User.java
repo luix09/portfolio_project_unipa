@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +42,8 @@ public class User implements UserDetails {
 
     @Column
     private String surname;
+    @Column
+    private Status status;
 
     @OneToMany(mappedBy = "owner")
     private List<Album> albums;

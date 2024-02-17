@@ -71,4 +71,14 @@ public class Picture {
         this.shootDate = new Date();
         this.album = album;
     }
+
+    public Picture(Integer pictureId, String title, String description, String category, Date date, Album album, String path) {
+        this.pictureId = pictureId;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.shootDate = date;
+        this.album = album;
+        this.path = path;
+    }
 }

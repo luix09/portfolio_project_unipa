@@ -14,18 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
-public class AuthenticationController {
+public class  AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseStatus registerUser(@RequestBody RegistrationDTO body) {
-        ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
-        if (resultCheck.getCode().equals("200")) {
-            resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword());
+        try {
+            ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
+            if (resultCheck.getCode().equals("200")) {
+                resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword(), body.isPhotographer());
+            }
+            return resultCheck;
+        } catch (RuntimeException ex) {
+            return new ResponseStatus().generalError(ex);
         }
-        return resultCheck;
     }
 
     @PostMapping("/login")

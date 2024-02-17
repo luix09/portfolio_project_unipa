@@ -1,4 +1,4 @@
-package com.slfl.portfolio_project.model;
+package com.slfl.portfolio_project.model.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,19 +10,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationDTO {
+public class UpdateUserDTORequest {
+    @JsonProperty
+    private String name;
+
+    @JsonProperty
+    private String surname;
+
+    @JsonProperty
     private String username;
+
+    @JsonProperty
     private String password;
+
+    @JsonProperty
     private String email;
 
-    @JsonProperty("is_photographer")
+    @JsonProperty
     private boolean isPhotographer;
-
-    public String toString(){
-        return "Registration info: username: " + this.username + " password: " + this.password;
-    }
-
-    public boolean isPhotographer() {
-        return isPhotographer;
-    }
 }

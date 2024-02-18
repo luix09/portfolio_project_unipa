@@ -3,16 +3,18 @@ package com.slfl.portfolio_project.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
 import com.slfl.portfolio_project.model.Album;
+import com.slfl.portfolio_project.model.ImageFile;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
-import com.slfl.portfolio_project.model.response_factory.picture.PictureError;
+import com.slfl.portfolio_project.model.validation_image.FormatHandler;
+import com.slfl.portfolio_project.model.validation_image.SizeHandler;
+import com.slfl.portfolio_project.repository.ImageHandler;
 import com.slfl.portfolio_project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
@@ -55,19 +57,13 @@ public class PhotographerController {
     }
 
     @PostMapping("/picture/create/{albumId}")
-    public CustomResponse createPicture(@RequestHeader(HttpHeaders.AUTHORIZATION) String token , @PathVariable Integer albumId, @RequestBody PictureCreateDTO pictureCreateDTO) {
-        try {
-            CustomResponse response = pictureService.createPicture(pictureCreateDTO, albumId);
-            photographerService.notifyFollowers(token);
-            return response;
-        } catch (Exception ex) {
-            return new PictureError("404", "Errore durante la creazione dell'immagine");
-        }
+    public CustomResponse createPicture(@PathVariable Integer albumId, @RequestBody PictureCreateDTO pictureCreateDTO) {
+        return pictureService.createPicture(pictureCreateDTO, albumId);
     }
 
     //TODO: to be tested
     @PostMapping("/picture/upload/{albumId}")
-    public String handlePictureUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+    public String handlePictureUpload(@RequestParam(value = "file") ImageFile file,
                                       RedirectAttributes redirectAttributes,
                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                       @PathVariable Integer albumId,
@@ -79,16 +75,27 @@ public class PhotographerController {
             // Convert JSON string to PictureCreateDTO object
             PictureCreateDTO dto = objectMapper.readValue(pictureCreateDTO, PictureCreateDTO.class);
             pictureService.createPicture(dto, albumId);
+
+            ImageHandler formatHandler = new FormatHandler();
+            ImageHandler sizeHandler = new SizeHandler();
+            formatHandler.setNextHandler(sizeHandler);
+
             // needed to get userDir/albumTitle structure for the directory
             String userDir = userService.getUserFromToken(token).getUsername();
             Integer pictureId = pictureService.getPictureByTitle(dto.getTitle()).getPictureId();
             Album album = albumService.getAlbumIdByPictureId(pictureId);
 
+
+            if(!formatHandler.handleImage(file)){
+                redirectAttributes.addFlashAttribute("message",
+                        "Error while uploading " + file.getOriginalFilename() + "!" + "\nError: check whether the format and dimensions comply with the guidelines " );
+            }
             // Store inside that directory
             storageService.store(file, userDir + album.getTitle());
             String path = storageService.load(file.getOriginalFilename()).toUri().getPath();
             // Storing path to database
             imageFileService.storeFileToPictureTable(path, pictureId);
+            photographerService.notifyFollowers(token);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded " + file.getOriginalFilename() + "!");
@@ -102,6 +109,10 @@ public class PhotographerController {
     @PostMapping("/picture/update/{pictureId}")
     public CustomResponse updatePicture(@PathVariable Integer pictureId, @RequestBody PictureCreateDTO pictureCreateDTO) {
         return pictureService.updatePicture(pictureId, pictureCreateDTO);
+    }
+    @PostMapping("/picture/restore/{pictureId}")
+    public CustomResponse restorePicture(@PathVariable Integer pictureId) {
+        return pictureService.restorePicture(pictureId);
     }
 
     @PostMapping("/picture/delete/{pictureId}")

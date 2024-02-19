@@ -1,8 +1,6 @@
 package com.slfl.portfolio_project.service;
 
 import com.slfl.portfolio_project.model.Album;
-import com.slfl.portfolio_project.model.response_factory.CustomResponse;
-import com.slfl.portfolio_project.model.response_factory.image.LoadedImageResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

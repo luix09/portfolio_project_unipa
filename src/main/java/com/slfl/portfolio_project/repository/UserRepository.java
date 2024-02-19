@@ -14,6 +14,9 @@ public interface UserRepository extends JpaRepository<User, Integer>{
     Optional<User> findByUsername(String username);
     List<User> findByEmail(String email);
 
+    @Query("SELECT p FROM User p JOIN p.role r WHERE r.roleName = 'PHOTOGRAPHER'")
+    List<User> findAllPhotographer();
+
     @Query("SELECT us from User us JOIN us.albums a WHERE a.albumId = :albumId")
     Optional<User> findByAlbumId(@Param("albumId") Integer albumId);
 }

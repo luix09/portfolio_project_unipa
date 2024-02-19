@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -90,5 +91,9 @@ public class UserService implements UserDetailsService {
         System.out.println("In the user details service");
 
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user is not valid"));
+    }
+
+    public List<User> getAllPhotographers() {
+        return userRepository.findAllPhotographer();
     }
 }

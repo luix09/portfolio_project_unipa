@@ -10,12 +10,7 @@ import com.slfl.portfolio_project.model.strategy_pattern.PictureSortingContext;
 import com.slfl.portfolio_project.repository.UserRepository;
 import com.slfl.portfolio_project.service.ImageFileService;
 import com.slfl.portfolio_project.service.PictureService;
-import com.slfl.portfolio_project.service.StorageService;
-import com.slfl.portfolio_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,6 +45,6 @@ public class PictureController {
         if(Objects.equals(sortType, "name")){
             this.pictureSortingContext.setPictureSortingStrategy(new NameSortingStrategy());
         }
-        return service.loadFileImageByAlbum(albumId);
+        return service.loadPictureListByAlbum(albumId);
     }
 }

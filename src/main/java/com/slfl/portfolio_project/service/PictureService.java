@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
 import java.util.List;
+import java.nio.file.Path;
 import java.util.Optional;
 
 @Service
@@ -89,7 +89,7 @@ public class PictureService {
                 return this.responseFactory.createCustomError("404", "Immagine non trovata.");
             }
             //salvataggio backup
-            pictureCareTaker.save(specifiedPicture);
+            pictureCareTaker.save(specifiedPicture, pictureMementoRepository);
             pictureRepository.save(new Picture(pictureId, pictureCreateDTO.getTitle(), pictureCreateDTO.getDescription(), pictureCreateDTO.getCategory(), pictureCreateDTO.getDate(), specifiedPicture.getAlbum()));
             return this.responseFactory.updateSuccessfullyResponse();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class PictureService {
         }
     }
 
-    public CustomResponse loadFileImageByAlbum(Integer albumId) {
+    public CustomResponse loadPictureListByAlbum(Integer albumId) {
         try {
             Optional<Album> foundAlbum = albumRepository.findById(albumId);
             if (foundAlbum.isEmpty()) {
@@ -150,7 +150,7 @@ public class PictureService {
                 return this.responseFactory.createCustomError("404", "Immagine non trovata.");
             }
             PictureCareTaker pictureCareTaker = new PictureCareTaker();
-            Picture restoredPicture = pictureCareTaker.undo(specifiedPicture);
+            Picture restoredPicture = pictureCareTaker.undo(specifiedPicture, pictureMementoRepository);
             pictureRepository.save(new Picture(pictureId, restoredPicture.getTitle(), restoredPicture.getDescription(), restoredPicture.getCategory(), restoredPicture.getShootDate(), restoredPicture.getAlbum(), restoredPicture.getPath()));
             return this.responseFactory.updateSuccessfullyResponse();
         } catch (Exception e) {

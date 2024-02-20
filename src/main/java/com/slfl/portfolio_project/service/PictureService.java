@@ -13,9 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -23,14 +21,12 @@ public class PictureService {
 
     private final PictureRepository pictureRepository;
     private final AlbumRepository albumRepository;
-    private final ImageFileService imageFileService;
     private final ResponseFactory responseFactory;
 
     @Autowired
-    PictureService(PictureRepository pictureRepository, AlbumRepository albumRepository, ImageFileService imageFileService) {
+    PictureService(PictureRepository pictureRepository, AlbumRepository albumRepository) {
         this.pictureRepository = pictureRepository;
         this.albumRepository = albumRepository;
-        this.imageFileService = imageFileService;
         this.responseFactory = new PictureResponseFactory();
     }
 
@@ -48,13 +44,15 @@ public class PictureService {
                 return this.responseFactory.createCustomError("404", "Album non trovato.");
             }
 
-            pictureRepository.save(new Picture(
+            Picture newPicture = new Picture(
                     pictureCreateDTO.getTitle(),
                     pictureCreateDTO.getDescription(),
                     pictureCreateDTO.getCategory(),
                     pictureCreateDTO.getDate(),
                     matchedAlbum.get()
-            ));
+            );
+
+            pictureRepository.save(newPicture);
 
             return this.responseFactory.createSuccessfullyResponse();
         } catch (Exception e) {
@@ -117,8 +115,8 @@ public class PictureService {
             if (foundAlbum.isEmpty()) {
                 return this.responseFactory.createCustomError("404", "Album non trovato in loadFileImageByAlbum");
             }
-            Stream<Path> images = imageFileService.loadImagesOfAlbum(foundAlbum.get());
-            return new LoadedImageResponse("200", "Immagini scaricate con successo.", images);
+            //Stream<Path> images = imageFileService.loadImagesOfAlbum(foundAlbum.get());
+            return new LoadedImageResponse("200", "Immagini scaricate con successo.", new Object());
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }

@@ -1,6 +1,7 @@
 package com.slfl.portfolio_project.model;
 
 
+import com.slfl.portfolio_project.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 

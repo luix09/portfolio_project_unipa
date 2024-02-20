@@ -1,6 +1,7 @@
 package com.slfl.portfolio_project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.slfl.portfolio_project.model.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,15 +61,6 @@ public class Picture {
         this.description = description;
         this.category = category;
         this.shootDate = date;
-        this.album = album;
-    }
-
-    public Picture(Integer pictureId, String title, String description, String category, Album album) {
-        this.pictureId = pictureId;
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.shootDate = new Date();
         this.album = album;
     }
 

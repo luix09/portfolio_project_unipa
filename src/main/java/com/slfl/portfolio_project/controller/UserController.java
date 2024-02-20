@@ -1,9 +1,13 @@
 package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.model.ResponseStatus;
-import com.slfl.portfolio_project.model.User;
+import com.slfl.portfolio_project.model.response_factory.CustomResponse;
+import com.slfl.portfolio_project.model.response_factory.user.PhotographerError;
+import com.slfl.portfolio_project.model.response_factory.user.PhotographerResponseFactory;
+import com.slfl.portfolio_project.model.user.User;
 import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
+import com.slfl.portfolio_project.service.PhotographerService;
 import com.slfl.portfolio_project.service.TokenService;
 import com.slfl.portfolio_project.service.UserService;
 import org.json.JSONException;
@@ -25,6 +29,14 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PhotographerService photographerService;
+
+    private final PhotographerResponseFactory responseFactory;
+
+    UserController() {
+        this.responseFactory = new PhotographerResponseFactory();
+    }
 
     @GetMapping("/checkUser")
     public ResponseStatus getInfo() {
@@ -56,33 +68,23 @@ public class UserController {
         }
     }
 
-    @GetMapping("/random/albums")
-    public ResponseStatus getRandomAlbums() {
+    @PostMapping("/follow/{photographer}")
+    public CustomResponse followPhotographer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable String photographer) {
         try {
-
-        } catch (Exception e) {
-
+            photographerService.followPhotographer(token, photographer);
+            return this.responseFactory.createSuccessfullyResponse();
+        } catch(Exception ex) {
+            return new PhotographerError("404", "Errore nel seguire un fotografo.");
         }
-        return new ResponseStatus();
     }
 
-    @GetMapping("/view/photographer/albums")
-    public ResponseStatus getAllPhotographerAlbums() {
+    @PostMapping("/unfollow/{photographer}")
+    public CustomResponse unfollowPhotographer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable String photographer) {
         try {
-
-        } catch (Exception e) {
-
+            photographerService.unfollowPhotographer(token, photographer);
+            return this.responseFactory.createSuccessfullyResponse();
+        } catch(Exception ex) {
+            return new PhotographerError("404", "Errore nel smettere di seguire un fotografo.");
         }
-        return new ResponseStatus();
-    }
-
-    @GetMapping("/view/photographer/album/{id}")
-    public ResponseStatus getPhotographerAlbum(@PathVariable String id) {
-        try {
-
-        } catch (Exception e) {
-
-        }
-        return new ResponseStatus();
     }
 }

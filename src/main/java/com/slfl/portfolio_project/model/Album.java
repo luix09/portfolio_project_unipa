@@ -1,6 +1,7 @@
 package com.slfl.portfolio_project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.slfl.portfolio_project.model.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

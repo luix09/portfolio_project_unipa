@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.model;
 
+import com.slfl.portfolio_project.model.user.User;
 import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;

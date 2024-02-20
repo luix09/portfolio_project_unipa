@@ -5,6 +5,7 @@ import com.slfl.portfolio_project.model.Album;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
+import com.slfl.portfolio_project.model.response_factory.picture.PictureError;
 import com.slfl.portfolio_project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 @RestController
 @RequestMapping("/photographer")
@@ -34,6 +34,9 @@ public class PhotographerController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PhotographerService photographerService;
+
     @PostMapping("/album/create")
     public CustomResponse createAlbum(@RequestBody AlbumCreateDTO albumCreateDTO, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         return albumService.createAlbum(albumCreateDTO, token);
@@ -51,8 +54,14 @@ public class PhotographerController {
     }
 
     @PostMapping("/picture/create/{albumId}")
-    public CustomResponse createPicture(@PathVariable Integer albumId, @RequestBody PictureCreateDTO pictureCreateDTO) {
-        return pictureService.createPicture(pictureCreateDTO, albumId);
+    public CustomResponse createPicture(@RequestHeader(HttpHeaders.AUTHORIZATION) String token , @PathVariable Integer albumId, @RequestBody PictureCreateDTO pictureCreateDTO) {
+        try {
+            CustomResponse response = pictureService.createPicture(pictureCreateDTO, albumId);
+            photographerService.notifyFollowers(token);
+            return response;
+        } catch (Exception ex) {
+            return new PictureError("404", "Errore durante la creazione dell'immagine");
+        }
     }
 
     //TODO: to be tested

@@ -3,6 +3,11 @@ package com.slfl.portfolio_project.service;
 import java.util.*;
 
 import com.slfl.portfolio_project.model.*;
+import com.slfl.portfolio_project.model.user.Customer;
+import com.slfl.portfolio_project.model.user.Photographer;
+import com.slfl.portfolio_project.model.user.User;
+import com.slfl.portfolio_project.repository.CustomerRepository;
+import com.slfl.portfolio_project.repository.PhotographerRepository;
 import com.slfl.portfolio_project.repository.RoleRepository;
 import com.slfl.portfolio_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class AuthenticationService {
+
+    @Autowired
+    private PhotographerRepository photographerRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -48,7 +59,11 @@ public class AuthenticationService {
 
                 Role userRole = roleRepository.findByRoleName(roleType).get();
 
-                user = userRepository.save(new User(username, email, encodedPassword, userRole));
+                if(isPhotographer) {
+                    user = photographerRepository.save(new Photographer(username, email, encodedPassword, userRole));
+                } else {
+                    user = customerRepository.save(new Customer(username, email, encodedPassword, userRole));
+                }
                 if (user.getUserId() != 0 && user.getUserId() != null) {
                     return response.registrationSuccess(user);
                 }

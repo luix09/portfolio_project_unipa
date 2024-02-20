@@ -1,7 +1,7 @@
 package com.slfl.portfolio_project.service;
 
 import com.slfl.portfolio_project.model.ResponseStatus;
-import com.slfl.portfolio_project.model.User;
+import com.slfl.portfolio_project.model.user.User;
 import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.slfl.portfolio_project.model;
+package com.slfl.portfolio_project.model.user;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.slfl.portfolio_project.model.*;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 @EnableAutoConfiguration
 public class User implements UserDetails {
 

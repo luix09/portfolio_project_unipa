@@ -1,8 +1,6 @@
 package com.slfl.portfolio_project.service.observer;
+import jakarta.mail.SendFailedException;
 
-import com.slfl.portfolio_project.model.User;
-
-public abstract class Observer {
-    protected User user;
-    public abstract void update();
+public interface Observer {
+    void update(String photographer) throws SendFailedException;
 }

@@ -1,7 +1,7 @@
 package com.slfl.portfolio_project.repository;
 
 import com.slfl.portfolio_project.model.Album;
-import com.slfl.portfolio_project.model.User;
+import com.slfl.portfolio_project.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

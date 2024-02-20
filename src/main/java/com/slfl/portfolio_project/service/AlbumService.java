@@ -2,8 +2,7 @@ package com.slfl.portfolio_project.service;
 
 import com.slfl.portfolio_project.model.Album;
 import com.slfl.portfolio_project.model.Picture;
-import com.slfl.portfolio_project.model.ResponseStatus;
-import com.slfl.portfolio_project.model.User;
+import com.slfl.portfolio_project.model.user.User;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
 import com.slfl.portfolio_project.model.response_factory.ResponseFactory;
@@ -40,7 +39,7 @@ public class AlbumService {
                 return this.responseFactory.createCustomError("404", "Album già presente.");
             }
 
-            albumRepository.save(new Album(albumCreateDTO.getTitle(), albumCreateDTO.getDescription(), albumCreateDTO.getDate(), new ArrayList<Picture>(), new ArrayList<User>(), owner));
+            albumRepository.save(new Album(albumCreateDTO.getTitle(), albumCreateDTO.getDescription(), albumCreateDTO.getDate(), new ArrayList<>(), new ArrayList<>(), owner));
 
             return this.responseFactory.createSuccessfullyResponse();
         } catch (Exception e) {
@@ -99,7 +98,7 @@ public class AlbumService {
                 return this.responseFactory.createCustomError("404", "Album non trovato.");
             }
 
-            albumRepository.save(new Album(albumId, albumCreateDTO.getTitle(), albumCreateDTO.getDescription(), albumCreateDTO.getDate(), new ArrayList<Picture>(), new ArrayList<User>(), owner));
+            albumRepository.save(new Album(albumId, albumCreateDTO.getTitle(), albumCreateDTO.getDescription(), albumCreateDTO.getDate(), new ArrayList<>(), new ArrayList<>(), owner));
             return this.responseFactory.updateSuccessfullyResponse();
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());

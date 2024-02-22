@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -123,5 +122,16 @@ public class PictureService {
         } catch (Exception e) {
             return this.responseFactory.createCustomError("404", e.getMessage());
         }
+    }
+
+    public Picture getPictureByTitle(String title) throws Exception {
+        Optional<Picture> optionalPicture = pictureRepository.findPictureByTitle(title);
+
+        if (optionalPicture.isEmpty()) {
+            throw new Exception("Error: album non trovato durante il recupero dell'immagine.");
+        }
+
+        return optionalPicture.get();
+
     }
 }

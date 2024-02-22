@@ -1,5 +1,6 @@
 package com.slfl.portfolio_project.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
 import com.slfl.portfolio_project.model.Album;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
@@ -65,12 +66,22 @@ public class PhotographerController {
     }
 
     //TODO: to be tested
-    @PostMapping("/picture/upload/{pictureId}")
-    public String handlePictureUpload(@RequestParam("file") MultipartFile file,
-                                      RedirectAttributes redirectAttributes, @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Integer pictureId) {
+    @PostMapping("/picture/upload/{albumId}")
+    public String handlePictureUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                      RedirectAttributes redirectAttributes,
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                      @PathVariable Integer albumId,
+                                      @RequestParam String pictureCreateDTO) {
         try {
+            // Create ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Convert JSON string to PictureCreateDTO object
+            PictureCreateDTO dto = objectMapper.readValue(pictureCreateDTO, PictureCreateDTO.class);
+            pictureService.createPicture(dto, albumId);
             // needed to get userDir/albumTitle structure for the directory
             String userDir = userService.getUserFromToken(token).getUsername();
+            Integer pictureId = pictureService.getPictureByTitle(dto.getTitle()).getPictureId();
             Album album = albumService.getAlbumIdByPictureId(pictureId);
 
             // Store inside that directory

@@ -58,7 +58,9 @@ public class FileSystemStorageService implements StorageService {
             Path destinationFile = userPath.resolve(
                             Paths.get(fileName))
                     .normalize().toAbsolutePath();
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+            Path absolute = this.rootLocation.toAbsolutePath();
+            Path parent = destinationFile.getParent().getParent();
+            if (!parent.equals(absolute)) {
                 // This is a security check
                 throw new StorageException(
                         "Cannot store file outside current directory.");

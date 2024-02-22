@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface PictureRepository extends JpaRepository<Picture, Integer> {
     Optional<Picture> findPictureByTitle(String title);
 
+    Optional<Picture> findSinglePictureByAlbum_AlbumId(Integer albumId);
+
     List<Picture> findPictureByAlbum_AlbumId(Integer album_albumId);
 
     @Query("SELECT p FROM Picture p ORDER BY SIZE(p.usersWhoLikes) DESC")

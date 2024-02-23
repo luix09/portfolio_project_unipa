@@ -44,7 +44,7 @@ public class CompressingAlgorithmDecorator extends StorageServiceDecorator {
         BufferedImage originalImage = null;
         try (InputStream inputStream = mpFile.getInputStream()) {
             originalImage = ImageIO.read(inputStream);
-            ImageIO.wr
+            //ImageIO.wr
         } catch (IOException e) {
             String info = String.format("compressImage - bufferedImage (file %s)- IOException - message: %s ", imageName, e.getMessage());
             System.out.println(info);

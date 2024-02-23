@@ -15,12 +15,4 @@ public class PortfolioProjectApplication {
 		SpringApplication.run(PortfolioProjectApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner init(StorageService storageService) {
-		return (args) -> {
-			storageService.deleteAll();
-			storageService.init();
-		};
-	}
-
 }

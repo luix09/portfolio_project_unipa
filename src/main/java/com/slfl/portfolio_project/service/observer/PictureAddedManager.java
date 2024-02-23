@@ -1,6 +1,5 @@
 package com.slfl.portfolio_project.service.observer;
 
-import jakarta.mail.SendFailedException;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -24,7 +23,7 @@ public class PictureAddedManager {
         customers.remove(o);
     }
 
-    public void notifyCustomers(String photographer) throws SendFailedException {
+    public void notifyCustomers(String photographer) {
         for (Observer customer : customers) {
             customer.update(photographer);
         }

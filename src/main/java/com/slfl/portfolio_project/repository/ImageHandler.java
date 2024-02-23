@@ -6,5 +6,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageHandler {
     void setNextHandler(ImageHandler nextHandler);
-    boolean handleImage(ImageFile file);
+    boolean handleImage(MultipartFile file);
 }

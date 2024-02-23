@@ -12,11 +12,6 @@ import java.util.stream.Stream;
 @Transactional
 public class ImageFileService {
     private final PictureService pictureService;
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private StorageService storageService;
 
     @Autowired
     public ImageFileService(PictureService pictureService) {
@@ -25,12 +20,5 @@ public class ImageFileService {
 
     public void storeFileToPictureTable(String path, Integer pictureId) throws Exception {
         pictureService.updateFilePicture(pictureId, path);
-    }
-
-    public Stream<Path> loadImagesOfAlbum(Album album) throws Exception {
-        String username = userService.getUserByAlbumId(album.getAlbumId()).getUsername();
-
-        // Load the image resource
-        return storageService.loadAllByDirectory(username + album.getTitle());
     }
 }

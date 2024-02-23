@@ -1,9 +1,9 @@
 package com.slfl.portfolio_project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.slfl.portfolio_project.configuration.StorageProperties;
 import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
 import com.slfl.portfolio_project.model.Album;
-import com.slfl.portfolio_project.model.ImageFile;
 import com.slfl.portfolio_project.model.requests.AlbumCreateDTO;
 import com.slfl.portfolio_project.model.requests.PictureCreateDTO;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
@@ -11,10 +11,12 @@ import com.slfl.portfolio_project.model.validation_image.FormatHandler;
 import com.slfl.portfolio_project.model.validation_image.SizeHandler;
 import com.slfl.portfolio_project.repository.ImageHandler;
 import com.slfl.portfolio_project.service.*;
+import com.slfl.portfolio_project.service.decorator.CompressingAlgorithmDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
@@ -28,7 +30,6 @@ public class PhotographerController {
     @Autowired
     private PictureService pictureService;
 
-    @Autowired
     private StorageService storageService;
 
     @Autowired
@@ -63,12 +64,13 @@ public class PhotographerController {
 
     //TODO: to be tested
     @PostMapping("/picture/upload/{albumId}")
-    public String handlePictureUpload(@RequestParam(value = "file") ImageFile file,
+    public String handlePictureUpload(@RequestParam(value = "file") MultipartFile file,
                                       RedirectAttributes redirectAttributes,
                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                       @PathVariable Integer albumId,
                                       @RequestParam String pictureCreateDTO) {
         try {
+            storageService = new CompressingAlgorithmDecorator(new FileSystemStorageService(new StorageProperties()));
             // Create ObjectMapper instance
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -91,8 +93,8 @@ public class PhotographerController {
                         "Error while uploading " + file.getOriginalFilename() + "!" + "\nError: check whether the format and dimensions comply with the guidelines " );
             }
             // Store inside that directory
-            storageService.store(file, userDir + album.getTitle());
-            String path = storageService.load(file.getOriginalFilename()).toUri().getPath();
+            storageService.store(file, userDir + "/" + album.getTitle());
+            String path = storageService.loadByDirectory(file.getOriginalFilename(), userDir + "/" + album.getTitle()).toUri().getPath();
             // Storing path to database
             imageFileService.storeFileToPictureTable(path, pictureId);
             photographerService.notifyFollowers(token);

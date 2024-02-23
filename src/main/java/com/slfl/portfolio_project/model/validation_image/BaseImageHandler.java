@@ -14,13 +14,13 @@ abstract class BaseImageHandler implements ImageHandler {
     }
 
     @Override
-    public boolean handleImage(ImageFile file) {
+    public boolean handleImage(MultipartFile file) {
         if (nextHandler != null) {
            return nextHandler.handleImage(file);
         }
         return true;
     }
 
-    protected abstract boolean doHandle(ImageFile file);
+    protected abstract boolean doHandle(MultipartFile file);
 
 }

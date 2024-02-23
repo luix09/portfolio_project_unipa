@@ -1,6 +1,6 @@
 package com.slfl.portfolio_project.controller;
 
-import com.slfl.portfolio_project.model.User;
+import com.slfl.portfolio_project.model.user.User;
 import com.slfl.portfolio_project.model.response_factory.CustomResponse;
 import com.slfl.portfolio_project.model.response_factory.ResponseFactory;
 import com.slfl.portfolio_project.model.response_factory.user.UserResponseFactory;

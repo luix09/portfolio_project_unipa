@@ -40,6 +40,16 @@ public class StorageServiceDecorator implements StorageService {
     }
 
     @Override
+    public Stream<Path> loadAllByDirectory(String directory) {
+        return null;
+    }
+
+    @Override
+    public Path loadByDirectory(String filename, String directory) {
+        return storageService.loadByDirectory(filename, directory);
+    }
+
+    @Override
     public void deleteAll() {
         storageService.deleteAll();
     }

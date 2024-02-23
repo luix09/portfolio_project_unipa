@@ -4,6 +4,7 @@ import com.slfl.portfolio_project.configuration.StorageProperties;
 import com.slfl.portfolio_project.misc.errors.StorageException;
 import com.slfl.portfolio_project.misc.errors.StorageFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
+@EnableAutoConfiguration
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
 
     @Autowired
     public FileSystemStorageService(StorageProperties storageProperties) {
-        if(storageProperties.getLocation().trim().isEmpty()){
+        if (storageProperties.getLocation().trim().isEmpty()) {
             throw new StorageException("File upload location can not be empty.");
         }
 
@@ -37,8 +39,7 @@ public class FileSystemStorageService implements StorageService {
     public void init() {
         try {
             Files.createDirectories(rootLocation);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
         }
     }
@@ -59,7 +60,7 @@ public class FileSystemStorageService implements StorageService {
                             Paths.get(fileName))
                     .normalize().toAbsolutePath();
             Path absolute = this.rootLocation.toAbsolutePath();
-            Path parent = destinationFile.getParent().getParent();
+            Path parent = destinationFile.getParent().getParent().getParent();
             if (!parent.equals(absolute)) {
                 // This is a security check
                 throw new StorageException(
@@ -69,8 +70,7 @@ public class FileSystemStorageService implements StorageService {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to store file.", e);
         }
     }
@@ -81,8 +81,7 @@ public class FileSystemStorageService implements StorageService {
             return Files.walk(this.rootLocation.resolve(userId), 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
         }
     }
@@ -93,8 +92,7 @@ public class FileSystemStorageService implements StorageService {
             return Files.walk(this.rootLocation.resolve(directory), 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
         }
     }
@@ -102,6 +100,7 @@ public class FileSystemStorageService implements StorageService {
 
     public Path loadByDirectory(String filename, String directory) {
         return rootLocation.resolve(directory + "/" + filename);
+
     }
 
     @Override
@@ -116,14 +115,12 @@ public class FileSystemStorageService implements StorageService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new StorageFileNotFoundException(
                         "Could not read file: " + filename);
 
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename, e);
         }
     }

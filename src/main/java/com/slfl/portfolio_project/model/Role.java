@@ -1,54 +1,53 @@
 package com.slfl.portfolio_project.model;
 
+import com.slfl.portfolio_project.model.user.User;
+import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.Set;
 
 @Entity
-@Table(name="roles")
+@Table(name = "roles")
 @EnableAutoConfiguration
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="role_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "role_id")
     private Integer roleId;
 
-    private String authority;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RoleType roleName;
 
-    public Role(){
+    @OneToMany(mappedBy = "role")
+    private Set<User> users;
+
+    public Role() {
         super();
     }
 
-    public Role(String authority){
-        this.authority = authority;
+    public Role(RoleType roleName) {
+        this.roleName = roleName;
     }
 
-    public Role(Integer roleId, String authority){
-        this.roleId = roleId;
-        this.authority = authority;
+    public Role(String role) {
+        RoleType type = RoleType.valueOf(role);
+        this.roleId = type.ordinal();
+        this.roleName = type;
     }
 
     @Override
     public String getAuthority() {
-        return this.authority;
+        return this.roleName.name();
     }
 
-    public void setAuthority(String authority){
-        this.authority = authority;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public Integer getRoleId(){
-        return this.roleId;
-    }
-
-    public void setRoleId(Integer roleId){
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }
 }

@@ -1,9 +1,13 @@
 package com.slfl.portfolio_project.controller;
 
 import com.slfl.portfolio_project.model.ResponseStatus;
-import com.slfl.portfolio_project.model.User;
-import com.slfl.portfolio_project.model.requests.UserDTORequest;
+import com.slfl.portfolio_project.model.response_factory.CustomResponse;
+import com.slfl.portfolio_project.model.response_factory.user.PhotographerError;
+import com.slfl.portfolio_project.model.response_factory.user.PhotographerResponseFactory;
+import com.slfl.portfolio_project.model.user.User;
+import com.slfl.portfolio_project.model.requests.UpdateUserDTORequest;
 import com.slfl.portfolio_project.repository.UserRepository;
+import com.slfl.portfolio_project.service.PhotographerService;
 import com.slfl.portfolio_project.service.TokenService;
 import com.slfl.portfolio_project.service.UserService;
 import org.json.JSONException;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -25,6 +30,14 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PhotographerService photographerService;
+
+    private final PhotographerResponseFactory responseFactory;
+
+    UserController() {
+        this.responseFactory = new PhotographerResponseFactory();
+    }
 
     @GetMapping("/checkUser")
     public ResponseStatus getInfo() {
@@ -44,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
+    public ResponseStatus updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id, @RequestBody UpdateUserDTORequest updatedUser) throws UnsupportedEncodingException, JSONException {
         try {
             if (userService.checkAuth(token)) {
                 return userService.updateUser(id, updatedUser);
@@ -56,4 +69,23 @@ public class UserController {
         }
     }
 
+    @PostMapping("/follow/{photographer}")
+    public CustomResponse followPhotographer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable String photographer) {
+        try {
+            photographerService.followPhotographer(token, photographer);
+            return this.responseFactory.createSuccessfullyResponse();
+        } catch(Exception ex) {
+            return new PhotographerError("404", "Errore nel seguire un fotografo.");
+        }
+    }
+
+    @PostMapping("/unfollow/{photographer}")
+    public CustomResponse unfollowPhotographer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable String photographer) {
+        try {
+            photographerService.unfollowPhotographer(token, photographer);
+            return this.responseFactory.createSuccessfullyResponse();
+        } catch(Exception ex) {
+            return new PhotographerError("404", "Errore nel smettere di seguire un fotografo.");
+        }
+    }
 }

@@ -1,35 +1,35 @@
 package com.slfl.portfolio_project.model;
 
-public class ResponseData {
-    private User user;
+import lombok.Setter;
+
+@Setter
+public class ResponseData<T> {
+    private T user;
+    @Setter
     private String jwt;
 
     public ResponseData(){
         super();
     }
 
-    public ResponseData(User user, String jwt){
-        this.user = user;
+    public ResponseData(T user, String jwt){
+        this.user = (T) user;
         this.jwt = jwt;
     }
-    public ResponseData(User user){
+    public ResponseData(T user){
         this.user = user;
     }
 
-    public User getUser(){
+    public T getUser(){
         return this.user;
     }
 
-    public void setUser(User user){
+    public void setUser(T user){
         this.user = user;
     }
 
     public String getJwt(){
         return this.jwt;
-    }
-
-    public void setJwt(String jwt){
-        this.jwt = jwt;
     }
 
 }

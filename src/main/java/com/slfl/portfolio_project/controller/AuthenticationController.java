@@ -3,6 +3,7 @@ package com.slfl.portfolio_project.controller;
 import com.slfl.portfolio_project.model.RegistrationDTO;
 import com.slfl.portfolio_project.model.ResponseStatus;
 import com.slfl.portfolio_project.service.AuthenticationService;
+import com.slfl.portfolio_project.service.AuthenticationServiceWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,18 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
-public class AuthenticationController {
+public class  AuthenticationController {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private AuthenticationServiceWrapper authenticationService;
 
     @PostMapping("/register")
     public ResponseStatus registerUser(@RequestBody RegistrationDTO body) {
-        ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
-        if (resultCheck.getCode().equals("200")) {
-            resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword());
+        try {
+            ResponseStatus resultCheck = authenticationService.checkExistUser(body.getUsername(), body.getEmail());
+            if (resultCheck.getCode().equals("200")) {
+                resultCheck = authenticationService.registerUser(body.getUsername(), body.getEmail(), body.getPassword(), body.isPhotographer());
+            }
+            return resultCheck;
+        } catch (RuntimeException ex) {
+            return new ResponseStatus().generalError(ex);
         }
-        return resultCheck;
     }
 
     @PostMapping("/login")

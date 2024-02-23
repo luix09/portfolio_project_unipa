@@ -56,8 +56,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
-                    auth.requestMatchers("/user/**").hasAnyRole("ADMIN", "USER");
+                    auth.requestMatchers("/home/**").permitAll();
+                    auth.requestMatchers("/user/**").hasAnyRole("CUSTOMER", "PHOTOGRAPHER");
+                    auth.requestMatchers("/photographer/**").hasAnyRole("PHOTOGRAPHER");
+                    auth.requestMatchers("/customer/**").hasAnyRole("CUSTOMER");
                     auth.anyRequest().authenticated();
                 });
 

@@ -58,6 +58,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/home/**").permitAll();
                     auth.requestMatchers("/user/**").hasAnyRole("CUSTOMER", "PHOTOGRAPHER");
+                    auth.requestMatchers("/ws").permitAll();
+                    auth.requestMatchers("/messages/**").permitAll();
                     auth.requestMatchers("/photographer/**").hasAnyRole("PHOTOGRAPHER");
                     auth.requestMatchers("/customer/**").hasAnyRole("CUSTOMER");
                     auth.anyRequest().authenticated();

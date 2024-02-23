@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 
@@ -21,7 +22,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 @EnableAutoConfiguration
 public class ChatRoom {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @UuidGenerator
     @Column
     private String id;
 

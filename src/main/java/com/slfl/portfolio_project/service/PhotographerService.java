@@ -40,7 +40,10 @@ public class PhotographerService {
     public void notifyFollowers(String token) throws Exception {
         User photographer = userService.getUserFromToken(token);
         List<Observer> observers = new ArrayList<>();
+
+        // Recupera i followers di un fotografo dal database
         for (Customer customer : this.getFollowersOf(photographer.getUsername())) {
+            // Aggiungi tutti i followers come observers del fotografo
             CustomerObserver observer = new CustomerObserver(customer);
             observers.add(observer);
         }
@@ -49,59 +52,62 @@ public class PhotographerService {
         pictureManager.notifyCustomers(photographer.getUsername());
     }
 
-    public void followPhotographer(String token, String username) throws Exception {
+    public Photographer getPhotographerByUsername(String username) throws Exception {
+        Optional<Photographer> photographer = photographerRepository.findPhotographerByUsername(username);
+        if(photographer.isEmpty()) {
+            throw new Exception("Fotografo non trovato.");
+        }
+        return photographer.get();
+    }
+
+    public Customer getCustomerByToken(String token) throws Exception {
         User customerUser = userService.getUserFromToken(token);
         Optional<Customer> customer = customerRepository.findCustomerByUsername(customerUser.getUsername());
         if(customer.isEmpty()) {
             throw new Exception("Customer non trovato.");
         }
-        Optional<Photographer> photographer = photographerRepository.findPhotographerByUsername(username);
-        if(photographer.isEmpty()) {
-            throw new Exception("Photographer non trovato.");
-        }
-        Photographer followedPhotographer = photographer.get();
-        Customer newFollower = customer.get();
+        return customer.get();
+    }
 
-        // Updating customer followings
+    public void followPhotographer(String token, String username) throws Exception {
+        // Trova il cliente a partire dal token della richiesta HTTP
+        // Trova il fotografo in base allo username passato come parametro
+        Photographer followedPhotographer = getPhotographerByUsername(username);
+        Customer newFollower = getCustomerByToken(token);
+
+        // Aggiornamento dei fotografi seguiti dal cliente
         List<Photographer> following = newFollower.getFollowing();
         following.add(followedPhotographer);
         newFollower.setFollowing(following);
         customerRepository.save(newFollower);
 
-        // Updating photographer followers
+        // Aggiornamento dei followers del fotografo
         List<Customer> followers = followedPhotographer.getFollowers();
         followers.add(newFollower);
         followedPhotographer.setFollowers(followers);
         photographerRepository.save(followedPhotographer);
 
-        pictureManager.followPhotographer(new CustomerObserver(customer.get()));
+        pictureManager.followPhotographer(new CustomerObserver(newFollower));
     }
 
     public void unfollowPhotographer(String token, String username) throws Exception {
-        User customerUser = userService.getUserFromToken(token);
-        Optional<Customer> customer = customerRepository.findCustomerByUsername(customerUser.getUsername());
-        if(customer.isEmpty()) {
-            throw new Exception("Customer non trovato.");
-        }
-        Optional<Photographer> photographer = photographerRepository.findPhotographerByUsername(username);
-        if(photographer.isEmpty()) {
-            throw new Exception("Photographer non trovato.");
-        }
-        Photographer unfollowedPhotographer = photographer.get();
-        Customer oldFollower = customer.get();
+        // Trova il cliente a partire dal token della richiesta HTTP
+        // Trova il fotografo in base allo username passato come parametro
+        Photographer unfollowedPhotographer = getPhotographerByUsername(username);
+        Customer oldFollower = getCustomerByToken(token);
 
-        // Updating customer followings
+        // Rimuovi fotografo dalla lista dei seguiti del cliente
         List<Photographer> following = oldFollower.getFollowing();
         following.remove(unfollowedPhotographer);
         oldFollower.setFollowing(following);
         customerRepository.save(oldFollower);
 
-        // Updating photographer followers
+        // Rimuovi cliente dalla lista dei followers del fotografo
         List<Customer> followers = unfollowedPhotographer.getFollowers();
         followers.remove(oldFollower);
         unfollowedPhotographer.setFollowers(followers);
         photographerRepository.save(unfollowedPhotographer);
 
-        pictureManager.unfollowPhotographer(new CustomerObserver(customer.get()));
+        pictureManager.unfollowPhotographer(new CustomerObserver(oldFollower));
     }
 }

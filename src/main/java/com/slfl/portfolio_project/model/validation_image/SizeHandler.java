@@ -9,7 +9,6 @@ public class SizeHandler extends BaseImageHandler {
     protected boolean doHandle(MultipartFile image) {
         int maxSize = 5 * 1024 * 1024; // 5MB
         long imageSize =  image.getSize();
-        return imageSize <= maxSize; // Valid size
-// Not valid size
+        return imageSize <= maxSize;
     }
 }

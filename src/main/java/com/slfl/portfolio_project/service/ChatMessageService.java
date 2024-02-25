@@ -15,9 +15,9 @@ public class ChatMessageService {
     private final ChatRoomService chatRoomService;
 
     /**
-     * Find charRoomId and associates this message to the chatRoom.
-     * Store received chat message into the database.
-     * @param chatMessage message to be saved
+     * Trova l'id della chat e associa questo messaggio alla chatRoom adeguata.
+     * Memorizza il messaggio ricevuto nel database.
+     * @param chatMessage messaggio da salvare
      * @return ChatMessage
      */
     public ChatMessage save(ChatMessage chatMessage) {

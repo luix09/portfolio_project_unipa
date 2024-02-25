@@ -93,19 +93,11 @@ public class User implements UserDetails {
         role = new Role(RoleType.CUSTOMER);
     }
 
-    public void setId(Integer userId) {
-        this.userId = userId;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(this.role.getAuthority()));
         return authorities;
-    }
-
-    public String setEmail(String email) {
-        return this.email = email;
     }
 
     @Override

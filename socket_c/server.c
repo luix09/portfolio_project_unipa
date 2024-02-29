@@ -29,6 +29,7 @@ int main() {
 
     // Accettazione delle connessioni dai client
     addr_size = sizeof serverStorage;
+    // restituisce due file descriptor associati ai due client socket
     first_client = accept(unix_server_socket, (struct sockaddr *) &serverStorage, &addr_size);
     second_client = accept(unix_server_socket, (struct sockaddr *) &serverStorage, &addr_size);
 
@@ -37,8 +38,11 @@ int main() {
     while (cmdEXIT == 0)
     {
         // Ricezione del messaggio dal Client1 e invio al Client2
-        recv(first_client, buffer, 1024, 0);
-        printf ("%s\nInvia al Client2\n", buffer);
+        if(recv(first_client, buffer, 1024, 0) == 0) {
+            printf("Disconnessione del client1. Chiusura del server.");
+            return 0;
+        }
+        printf ("Client1 invia a Client2: %s\n", buffer);
         send(second_client,buffer,1024,0);
         if (compare_strings(buffer, "exit")==0)
         {   
@@ -48,8 +52,11 @@ int main() {
         {
             // Azzera il buffer e ricevi il messaggio dal Client2
             memset(&buffer[0], 0, sizeof(buffer));    
-            recv(second_client, buffer, 1024, 0);
-            printf ("%s\nInvia al Client1\n", buffer);
+            if(recv(second_client, buffer, 1024, 0) == 0) {
+                printf("Disconnessione del client2. Chiusura del server.");
+                return 0;
+            }
+            printf ("Client2 invia al Client1: %s\n", buffer);
             // Invia il messaggio ricevuto dal Client2 al Client1
             send(first_client,buffer,1024,0);
             if (compare_strings(buffer, "exit")==0)

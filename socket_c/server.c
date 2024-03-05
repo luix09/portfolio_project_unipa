@@ -17,7 +17,7 @@ int main() {
     unix_server_socket = socket(PF_INET, SOCK_STREAM, 0);
     serverAddr.sin_family = PF_INET;
     serverAddr.sin_port = htons(7891);
-    serverAddr.sin_addr.s_addr = inet_addr("127.0.01");
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
     bind(unix_server_socket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
 

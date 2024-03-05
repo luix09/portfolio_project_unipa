@@ -96,7 +96,8 @@ public class PhotographerController {
             storageService.store(file, userDir + "/" + album.getTitle());
             String path = storageService.loadByDirectory(file.getOriginalFilename(), userDir + "/" + album.getTitle()).toUri().getPath();
             // Storing path to database
-            imageFileService.storeFileToPictureTable(path, pictureId);
+            String sanitizedPath = path.replaceAll("\\s", "%20");
+            imageFileService.storeFileToPictureTable(sanitizedPath, pictureId);
             photographerService.notifyFollowers(token);
 
             redirectAttributes.addFlashAttribute("message",

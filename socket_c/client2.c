@@ -41,6 +41,12 @@ int main() {
     {
         // Ricezione dei messaggi dal server
         int recvValue = recv(clientSocket, buffer, sizeof buffer - 1, 0);
+
+        if(recvValue == 0)
+        {
+            printf("Disconnessione del client1 o del server.");
+            return 0;
+        }
         if (recvValue != 1)
         {        
             if (compare_strings(buffer, "exit")==-1)

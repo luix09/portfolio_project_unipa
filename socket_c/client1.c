@@ -52,7 +52,12 @@ int main() {
             memset(&buffer[0], 0, sizeof(buffer));
             // Attendo ricezione del messaggio dal client2 sul socket
             int recvValue = recv(clientSocket, buffer, sizeof buffer - 1, 0);
-            if (recvValue != 1)
+
+            if(recvValue == 0) {
+                printf("Disconnessione del client2 o del server.");
+                return 0;
+            } 
+            else if (recvValue != 1)
             {
                 if (compare_strings(buffer, "exit")==-1)
                 {
